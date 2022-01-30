@@ -31,6 +31,15 @@ def create_sensor_dict(hf_recording):
     return sensor_dict
 
 
+def filter_sensor_dict(sensor_dict, sensors='all', groups='all'):
+    if sensors != 'all':
+        sensor_dict = {sensor:group for sensor, group in sensor_dict.items() if sensor in sensors}
+    
+    if groups != 'all':
+        sensor_dict = {sensor:group for sensor, group in sensor_dict.items() if group in groups}
+    
+    return sensor_dict
+
 def time_axis(hf_recording, sensor_name, component=None, sensor_dict=None, starttime=0):
     if sensor_dict is None:
         sensor_dict = create_sensor_dict(hf_recording)
