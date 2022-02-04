@@ -1,19 +1,19 @@
 import setuptools
 
-with open("README.md", "r") as fh:
+with open("README.rst", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="opyndata",
-    version="1.0.0",
+    version="0.0.1",
     author="",
     author_email="",
     description="OpyNDATA toolbox for import and postprocessing of measurement data",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/knutankv/open-bridge-data",
+    url="https://github.com/knutankv/opyndata",
     packages=setuptools.find_packages(),
-    install_requires=['numpy', 'scipy', 'matplotlib', 'vispy'],
+    install_requires=['numpy', 'scipy', 'matplotlib', 'h5py', 'dash', 'plotly', 'namedtuple', 'datetime', 'flask'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

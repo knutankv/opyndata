@@ -1,13 +1,34 @@
+"""
+##############################################
+Data import module
+##############################################
+All functions related to data import
+"""
+
 import numpy as np
 import scipy.io as sio
 from collections import namedtuple
 import pandas as pd
-import datetime
 from .misc import create_sensor_dict
 import h5py
 
-#%% ------------------------ HDF export functions ----------------------------
+# ------------------------ HDF export functions ----------------------------
 def get_all_comp(obj):
+    """
+    Get all components (datasets) from h5py object.
+        
+    Arguments
+    ---------------------------
+    obj : obj
+        object from h5 file with datasets placed in groups
+
+    Returns
+    ---------------------------
+    keys : str
+        tuple of strings indicating the names of all datasets (components)
+
+    """
+
     keys = ()
     if isinstance(obj, h5py.Group):
         for key, value in obj.items():
@@ -18,6 +39,31 @@ def get_all_comp(obj):
     return keys
 
 def export_from_multirec_hdf(hf, rec_names, **kwargs):
+    """
+    Export all specified recordings from h5 file with recordings as groups.
+        
+    Arguments
+    ---------------------------
+    hf : obj
+        object from h5py representing the h5-file with multiple recordings
+    rec_names : str
+        list of strings with requested recordings
+    component_dict : dict
+        dictionary with keys equal the names of either sensor groups or sensors, 
+        and items equal the corresponding requested components
+    lookup_sensor_groups : True, optional
+        specifying if sensor _groups_ are used in component_dict - if False sensor names are used
+    decimation_factor : 1, optional
+        integer defining the decimation wanted for data retrieval (every n-th sample)
+    level_separator : '/', optional
+        separator used for dataframes when combining sensor name and component name to a single string
+
+    
+    Returns
+    ---------------------------
+    df_full : obj
+        pandas dataframe with all requested data
+    """
 
     if rec_names == 'all':
         rec_names = list(hf.keys())
@@ -37,9 +83,35 @@ def export_from_multirec_hdf(hf, rec_names, **kwargs):
         
     return df_full
         
-def export_from_hdf(hf, component_dict=None, 
+def export_from_hdf(hf_recording, component_dict=None, 
                     lookup_sensor_groups=True,
-                    return_as='dataframe', decimation_factor=1):
+                    return_as='dataframe', decimation_factor=1,
+                    level_separator='/'):
+    """
+    Export data from recording established from h5py.
+        
+    Arguments
+    ---------------------------
+    hf_recording : obj
+        object from h5py representing the recording (if multiple recs in same file, hf['my_rec_name'])
+    component_dict : dict
+        dictionary with keys equal the names of either sensor groups or sensors, 
+        and items equal the corresponding requested components
+    lookup_sensor_groups : True, optional
+        specifying if sensor _groups_ are used in component_dict - if False sensor names are used
+    return_as : 'dataframe', optional
+        how to return data - valid options are 'dataframe', 'array', 'dict
+    decimation_factor : 1, optional
+        integer defining the decimation wanted for data retrieval (every n-th sample)
+    level_separator : '/', optional
+        separator used for dataframes when combining sensor name and component name to a single string
+
+
+    Returns
+    ---------------------------
+    output
+        pandas dataframe, dictionary or array depending on input of return_as
+    """
     
     ds = decimation_factor
     
@@ -60,20 +132,20 @@ def export_from_hdf(hf, component_dict=None,
             raise ValueError('Wrong format. Use None or dict as input for sensors_and_components.')
     
     sensor_data = dict()
-    sensor_groups = list(hf.keys())
+    sensor_groups = list(hf_recording.keys())
     for sensor_group in sensor_groups:
-        sensors_in_group = list(hf[sensor_group].keys())
+        sensors_in_group = list(hf_recording[sensor_group].keys())
 
         for sensor in sensors_in_group:
-            components = list(hf[sensor_group][sensor].keys())
+            components = list(hf_recording[sensor_group][sensor].keys())
 
             for c in get_valid_components():
-                sc = f'{sensor}_{c}'
-                sensor_data[sc] = hf[sensor_group][sensor][c][::ds]
+                sc = f'{sensor}{level_separator}{c}'
+                sensor_data[sc] = hf_recording[sensor_group][sensor][c][::ds]
     
-    if 'samplerate' in hf.attrs: #global sample rate
+    if 'samplerate' in hf_recording.attrs: #global sample rate
         sensor1 = list(sensor_data.keys())[0]  
-        sensor_data['t'] = np.linspace(0, hf.attrs['duration'], len(sensor_data[sensor1]))
+        sensor_data['t'] = np.linspace(0, hf_recording.attrs['duration'], len(sensor_data[sensor1]))
     
     if return_as == 'array':
         return np.vstack(list(sensor_data.values())).T, list(sensor_data.keys())
@@ -86,6 +158,25 @@ def export_from_hdf(hf, component_dict=None,
 
 
 def convert_stats(stats_dict, sensor_dict=None, fields=['mean', 'std']):
+    """
+    Convert dictionary with stats to dataframe.
+        
+    Arguments
+    ---------------------------
+    stats_dict : dict
+        dictionary with nested dictionary with statistics (result from get_stats)
+    sensor_dict : dict, optional
+        dictionary with keys equal the sensor names and  values equal the sensor type names
+    fields : ['mean', 'std'], optional
+        statistical fields to convert
+   
+    Returns
+    ---------------------------
+    stats_df : dict
+        dictionary with requested fields as keys and pandas dataframes 
+        with statistics in a flattened format as items
+    """
+        
     stats_df = {field: pd.DataFrame(stats_dict['recording'], 
                                     columns=['recording']) for field in fields}
 
@@ -110,6 +201,21 @@ def convert_stats(stats_dict, sensor_dict=None, fields=['mean', 'std']):
 
 
 def get_stats(hf_recording, fields=['std', 'mean']):
+    """
+    Export statistics from recording established from h5py.
+        
+    Arguments
+    ---------------------------
+    hf_recording : obj
+        object from h5py representing the recording (if multiple recs in same file, hf['my_rec_name'])
+    fields : ['mean', 'std'], optional
+        statistical fields to import
+
+    Returns
+    ---------------------------
+    stats : dict
+        nested dictionary with these levels: sensor (lowest) / component / field (highest)
+    """  
     sensor_dict = create_sensor_dict(hf_recording)
     stats = dict()
     
@@ -130,6 +236,27 @@ def get_stats(hf_recording, fields=['std', 'mean']):
 
 
 def get_stats_multi(hf, fields=['mean', 'std'], rec_names=None, avoid=['.global_stats']):
+    """
+    Export statistics from recording established from h5py.
+        
+    Arguments
+    ---------------------------
+    hf : obj
+        object from h5py representing the h5-file with multiple recordings
+    fields : ['mean', 'std'], optional
+        statistical fields to import
+    rec_names : str, optional
+        list of strings with requested recordings - standard value imports all recordings
+    avoid : ['.global_stats'], optional
+        list of groups on root (recordings, statistics, etc.) to avoid, s
+
+    Returns
+    ---------------------------
+    stats_df : dict
+        dictionary with requested fields as keys and pandas dataframes 
+        with statistics in a flattened format as items
+    """  
+    
     if rec_names is None:
         rec_names = list(hf.keys())
         
@@ -153,9 +280,44 @@ def get_stats_multi(hf, fields=['mean', 'std'], rec_names=None, avoid=['.global_
         
     return stats_df
 
-#%% ------------------------ Converting from legacy MATLAB format ----------------------------
-
 def load_matlab_rec(path, output_format='dataframe', name='recording'):
+    """
+    Import legacy Matlab open data files to python,.
+        
+    Arguments
+    ---------------------------
+    path : str
+        path to mat-file
+    output_format : 'dataframe', optional
+        how to return data - valid options are 'dataframe', 'array', 'dict
+    name : 'recording', optional
+        name of variable in Matlab with recording
+
+
+    Returns
+    ---------------------------
+    output
+        pandas dataframe, dictionary or array depending on input of return_as
+    """
+
+    
+    def avoid_ugly(arr):
+        if arr.size is 1:
+            arr = arr.flatten()[0]
+
+        elif arr.dtype.name == 'object':
+            value = []
+            
+            for val in arr[0]:
+                if val.size !=0:
+                    value.append(val[0])
+                else: 
+                    value.append('N/A')
+            arr = value
+                    
+        return arr
+
+
     tmp = sio.loadmat(path, squeeze_me=False, struct_as_record=True)
     tmp_rec = tmp[name][0][0] 
     
@@ -209,18 +371,3 @@ def load_matlab_rec(path, output_format='dataframe', name='recording'):
     return recording
 
 
-def avoid_ugly(arr):
-    if arr.size is 1:
-        arr = arr.flatten()[0]
-
-    elif arr.dtype.name == 'object':
-        value = []
-        
-        for val in arr[0]:
-            if val.size !=0:
-                value.append(val[0])
-            else: 
-                value.append('N/A')
-        arr = value
-                
-    return arr

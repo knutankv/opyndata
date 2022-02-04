@@ -1,25 +1,51 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-import pandas as pd
-from opyndata import data_import
-from opyndata.misc import create_sensor_dict, time_axis
-from os import listdir
+
+from opyndata.misc import create_sensor_dict
+
 import os
 import plotly.graph_objs as go
 import numpy as np
 from flask import send_from_directory
 from scipy import signal
-import requests
+
 import h5py
 import matplotlib.pyplot as plt
-import plotly.graph_objs as go
 
 
 def plot_sensors(hf_rec, view_axis=None, sensor_type_symbols=None, 
                  sensor_type_colors=None, coordinate_field_name='position', 
                  fig=None, click_callback=None, camera=None, 
                  ):
+    """
+    Plot sensors in 3d space from coordinates specified in h5py object
+        
+    Arguments
+    ---------------------------
+    hf_rec : obj
+        object from h5py representing the recording (if multiple recs in same file, hf['my_rec_name'])
+    view_axis : int, optional
+        scalar indicating axis to show plot from (2d projection)
+    sensor_type_symbols : str, optional
+        dictionary with keys equal the sensor types/groups and values equal to the string of the symbol to use
+    sensor_type_colors : str, optional
+        dictionary with keys equal the sensor types/groups and values equal to the color (type must be valid argument in plotly)
+    coordinate_field_name : 'position', optional
+        from what field should the coordinates be retrieved
+    fig : plotly figure object, optional
+        figure to plot the sensors in
+    click_callback : function, optional
+        callback function to run when clicking sensors
+    camera : obj, optional
+        plotly camera object (e.g. if a consistent view is wanted)
+
+    Returns
+    ---------------------------
+    fig : obj
+        plotly figure object
+
+    """
     
     sensor_types = list(hf_rec.keys())
     
@@ -68,7 +94,8 @@ def plot_sensors(hf_rec, view_axis=None, sensor_type_symbols=None,
                 vals_up = [0,1,0]   #needs adjustment
                 vals_eye[view_axis] = 2.5
                 camera = dict(eye=dict(zip(['x', 'y', 'z'], vals_eye)),
-                              up=dict(zip(['x', 'y', 'z'], vals_up)), projection=dict(type='orthographic'))
+                              up=dict(zip(['x', 'y', 'z'], vals_up)), 
+                              projection=dict(type='orthographic'))
             else:
                 camera = dict(projection=dict(type='orthographic'))
                 
@@ -80,7 +107,35 @@ def plot_sensors(hf_rec, view_axis=None, sensor_type_symbols=None,
             
     return fig
 
-def plot_sensors_2d(hf_rec, axes=[0,1], sensor_type_symbols=None, sensor_type_colors=None, coordinate_field_name='position', ax=None):
+def plot_sensors_2d(hf_rec, axes=[0,1], sensor_type_symbols=None, 
+                    sensor_type_colors=None, coordinate_field_name='position', 
+                    ax=None):
+    """
+    Plot sensors in 2d space from coordinates specified in h5py object
+        
+    Arguments
+    ---------------------------
+    hf_rec : obj
+        object from h5py representing the recording (if multiple recs in same file, hf['my_rec_name'])
+    axes : [0,1], optional
+        list of two axis indices describing what components to plot (x,y are standard)
+    sensor_type_symbols : str, optional
+        dictionary with keys equal the sensor types/groups and values equal to the string of the symbol to use
+    sensor_type_colors : str, optional
+        dictionary with keys equal the sensor types/groups and values equal to the color (type must be valid argument in matplotlib)
+    coordinate_field_name : 'position', optional
+        from what field should the coordinates be retrieved
+    ax : obj, optional
+        matplotlib axis object to plot inside
+
+
+    Returns
+    ---------------------------
+    fig : obj
+        matplotlib figure object
+
+    """
+
     sensor_types = list(hf_rec.keys())
     
     if sensor_type_symbols is None:
@@ -105,12 +160,24 @@ def plot_sensors_2d(hf_rec, axes=[0,1], sensor_type_symbols=None, sensor_type_co
     
     return ax
 
-def temp_download(url, save_path):
-        r = requests.get(url)
-        open(save_path, 'wb').write(r.content)
-    
-
 class AppSetup:
+    """
+    Class defining Dash application for h5 browsing.
+    
+    Arguments
+    ---------------------------
+    data_path : str
+        path to h5-file
+    logo_path : str, optional
+        path to logo to show in dashboard - no logo is standard
+    stylesheet_path : 'github', optional
+        path to css for stylesheet definitions - standard value uses css from GitHub repository
+    requested_stat : ['std', 'mean'], optional
+        fields to retrieve in .global_stats
+
+
+    """
+
     def __init__(self, data_path,
                 logo_path=None,
                 stylesheet_path='github', requested_stat=['std', 'mean']):
