@@ -72,8 +72,11 @@ def plot_sensors(hf_rec, view_axis=None, sensor_type_symbols=None,
         coors = []
         sensors = list(hf_rec[s_type].keys())
         for s in sensors:
-            coors.append(hf_rec[s_type][s].attrs[coordinate_field_name][0])
-            
+            if coordinate_field_name in hf_rec[s_type][s].attrs:
+                coors.append(hf_rec[s_type][s].attrs[coordinate_field_name][0])
+            else:
+                coors.append([np.nan, np.nan, np.nan])
+                
         coors = np.vstack(coors)
         
         ht = '<b>%{text}</b> <br> Position: (%{x}, %{y}, %{z})'
@@ -207,9 +210,6 @@ class AppSetup:
             sensor0 = list(global_stats[field0][sensor_gr0].keys())[0]
             comp0 = list(global_stats[field0][sensor_gr0][sensor0].keys())[0]
         else:
-            
-            
-            
             global_stats = {'Statistics not available':                       # rec name
                                 {'N/A':                  # sensor group
                                     {'N/A':              # sensor
@@ -219,6 +219,7 @@ class AppSetup:
             sensor_gr0 = 'N/A'
             sensor0 = 'N/A'
             comp0 = 'N/A'
+            
         
         rec0 = self.hf[rec_names[0]]
         opts0 = dict(
@@ -301,7 +302,7 @@ class AppSetup:
                                 dcc.Dropdown(
                                     id='stat-field-dropdown',
                                     options=[{'label':name, 'value':name} for name in valid_fields],
-                                    value=valid_fields[0]),  
+                                    value=field0),  
                             ], className='sac'
                         )
                 ], className ='plot_wrapper'
