@@ -66,8 +66,7 @@ Citation
 =======================
 Cite as:
 Knut Andreas Kvåle. (2022). knutankv/opyndata: Initial release, available on Zenodo (v0.0.2). Zenodo. https://doi.org/10.5281/zenodo.5978358
-
-[https://zenodo.org/badge/DOI/10.5281/zenodo.5978357.svg](https://doi.org/10.5281/zenodo.5978357)
+[![DOI]([/assets/images/shiprock.jpg "Shiprock, New Mexico by Beau Rogers"](https://doi.org/10.5281/zenodo.5978357)
 
 Support
 =======================
