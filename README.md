@@ -60,16 +60,15 @@ Examples are provided as Jupyter Notebooks in the [examples folder](https://gith
 
 Open data
 =======================
-For open data from us, visit https://www.ntnu.edu/kt/open-data.
+For an overview of available open measurement data from us, visit https://www.ntnu.edu/kt/open-data.
 
 Citation
 =======================
 Cite as:
 Knut Andreas Kvåle. (2022). knutankv/opyndata: Initial release, available on Zenodo (v0.0.2). Zenodo. https://doi.org/10.5281/zenodo.5978358
 
-![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5978357.svg)](https://doi.org/10.5281/zenodo.5978357
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5978357.svg)](https://doi.org/10.5281/zenodo.5978357)
 
 Support
 =======================
 Please [open an issue](https://github.com/knutankv/opyndata/issues/new) for support.
-
