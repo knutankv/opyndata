@@ -1,4 +1,4 @@
-![opyndata logo](https://raw.githubusercontent.com/knutankv/opyndata/master/opyndata-logo.svg)
+![opyndata logo](https://raw.githubusercontent.com/knutankv/opyndata/master/opyndata-logo.png)
 =======================
 
 What is opyndata?
