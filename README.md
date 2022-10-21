@@ -60,7 +60,7 @@ Examples are provided as Jupyter Notebooks in the [examples folder](https://gith
 
 Open data
 =======================
-For open data from us, visit https://www.ntnu.edu/kt/open-data.
+For an overview of available open measurement data from us, visit https://www.ntnu.edu/kt/open-data.
 
 Citation
 =======================
