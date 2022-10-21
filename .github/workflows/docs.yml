@@ -4,7 +4,7 @@ name: website
 on:
   push:
     branches:
-      - master
+      - main
     # Alternative: only build for tags.
     # tags:
     #   - '*'
@@ -26,11 +26,11 @@ jobs:
       - run: pip install pdoc3
       # ADJUST THIS: build your documentation into docs/.
       # We use a custom build script for pdoc itself, ideally you just run `pdoc -o docs/ ...` here.
-      - run: pdoc beef --html -o ./docs/  --template-dir=./docs/templates/
+      - run: pdoc opyndata --html -o ./docs/  --template-dir=./docs/templates/
 
       - uses: actions/upload-pages-artifact@v1
         with:
-          path: docs/beef/
+          path: docs/opyndata/
 
   # Deploy the artifact to GitHub pages.
   # This is a separate job so that only actions/deploy-pages has the necessary permissions.
