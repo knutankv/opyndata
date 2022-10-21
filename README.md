@@ -72,4 +72,3 @@ Knut Andreas Kvåle. (2022). knutankv/opyndata: Initial release, available on Ze
 Support
 =======================
 Please [open an issue](https://github.com/knutankv/opyndata/issues/new) for support.
-
