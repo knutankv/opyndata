@@ -16,7 +16,7 @@ pip install .
 or install directly from github:
 
 ```
-pip install git+https://www.github.com/knutankv/opyndata.git@master
+pip install git+https://www.github.com/knutankv/opyndata.git@main
 ```
 
 Quick start
@@ -56,7 +56,7 @@ For full code reference visit [knutankv.github.io/opyndata](https://knutankv.git
 
 Examples
 =======================
-Examples are provided as Jupyter Notebooks in the [examples folder](https://github.com/knutankv/opyndata/tree/master/examples).
+Examples are provided as Jupyter Notebooks in the [examples folder](https://github.com/knutankv/opyndata/tree/main/examples).
 
 Open data
 =======================
