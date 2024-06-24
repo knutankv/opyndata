@@ -73,14 +73,14 @@ def plot_sensors(hf_rec, view_axis=None, sensor_type_symbols=None,
         sensors = list(hf_rec[s_type].keys())
         for s in sensors:
             if coordinate_field_name in hf_rec[s_type][s].attrs:
-                coors.append(hf_rec[s_type][s].attrs[coordinate_field_name][0])
+                coors.append(hf_rec[s_type][s].attrs[coordinate_field_name])
             else:
                 coors.append([np.nan, np.nan, np.nan])
                 
         coors = np.vstack(coors)
         
         ht = '<b>%{text}</b> <br> Position: (%{x}, %{y}, %{z})'
-        
+
         traces.append(
             go.Scatter3d(x=coors[:,0], y=coors[:,1], z=coors[:,2], mode='markers', 
                          name=s_type, text=sensors, hovertemplate=ht))

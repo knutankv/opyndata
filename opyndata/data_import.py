@@ -86,7 +86,7 @@ def export_from_multirec_hdf(hf, rec_names, **kwargs):
 def export_from_hdf(hf_recording, component_dict=None, 
                     lookup_sensor_groups=True,
                     return_as='dataframe', decimation_factor=1,
-                    level_separator='/'):
+                    level_separator='/', return_t=True, name_from=None):
     """
     Export data from recording established from h5py.
         
@@ -100,11 +100,15 @@ def export_from_hdf(hf_recording, component_dict=None,
     lookup_sensor_groups : True, optional
         specifying if sensor _groups_ are used in component_dict - if False sensor names are used
     return_as : 'dataframe', optional
-        how to return data - valid options are 'dataframe', 'array', 'dict
+        how to return data - valid options are 'dataframe', 'array', 'dict'
     decimation_factor : 1, optional
         integer defining the decimation wanted for data retrieval (every n-th sample)
     level_separator : '/', optional
         separator used for dataframes when combining sensor name and component name to a single string
+    return_t : True
+        whether or not to return time axis
+    name_from : str, default=None
+        name of sensor from given attribute of sensor group (if None, the original name is used)
 
 
     Returns
@@ -140,10 +144,15 @@ def export_from_hdf(hf_recording, component_dict=None,
             components = list(hf_recording[sensor_group][sensor].keys())
 
             for c in get_valid_components():
-                sc = f'{sensor}{level_separator}{c}'
+                if name_from is not None:
+                    sensor_name = hf_recording[sensor_group][sensor].attrs[name_from]
+                else:
+                    sensor_name = sensor+''
+
+                sc = f'{sensor_name}{level_separator}{c}'
                 sensor_data[sc] = hf_recording[sensor_group][sensor][c][::ds]
     
-    if 'samplerate' in hf_recording.attrs: #global sample rate
+    if 'samplerate' in hf_recording.attrs and 'duration' in hf_recording.attrs and return_t: #global sample rate
         sensor1 = list(sensor_data.keys())[0]  
         sensor_data['t'] = np.linspace(0, hf_recording.attrs['duration'], len(sensor_data[sensor1]))
     
