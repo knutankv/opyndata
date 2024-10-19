@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="opyndata",
-    version="0.0.1",
+    version="0.0.2",
     author="",
     author_email="",
     description="OpyNDATA toolbox for import and postprocessing of measurement data",
