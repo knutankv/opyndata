@@ -52,7 +52,7 @@ if __name__ == '__main__':
     app.run_server(debug=False)
 ```  
 
-The result can be viewed by opening `https://127.0.0.1:8050` in a web browser (port 8050 is default, but others can be requested in the call of the `run_server` method of `app`.
+The result can be viewed by opening `https://127.0.0.1:8050` in a web browser (port 8050 is default, but others can be requested in the call of the `run_server` method of `app`).
 
 For full code reference visit [knutankv.github.io/opyndata](https://knutankv.github.io/opyndata/).
 
