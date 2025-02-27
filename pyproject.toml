@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "opyndata"
+description = "OpyNDATA toolbox for import and postprocessing of measurement data"
+requires-python = ">= 3.6"
+
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Knut A. Kvåle", email = "knut.a.kvale@ntnu.no"}
+    ]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering",
+]
+dynamic = ["version"]
+dependencies = ['numpy', 'scipy', 'pandas', 'matplotlib', 'h5py', 'dash', 'plotly', 'datetime', 'flask']
+
+
+[tool.setuptools.dynamic]
+version = {attr = "opyndata.__version__"}
+
+[tool.setuptools.packages]
+find = {}
+
+[project.urls]
+repository = "https://github.com/knutankv/opyndata"
+documentation = "https://knutankv.github.io/opyndata/"
