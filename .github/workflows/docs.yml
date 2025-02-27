@@ -28,7 +28,7 @@ jobs:
       # We use a custom build script for pdoc itself, ideally you just run `pdoc -o docs/ ...` here.
       - run: pdoc opyndata --html -o ./docs/  --template-dir=./docs/templates/
 
-      - uses: actions/upload-pages-artifact@v1
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: docs/opyndata/
 

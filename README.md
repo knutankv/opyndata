@@ -7,10 +7,10 @@ OpyNDATA is a package supporting the open data from measurement projects at the 
 
 Installation 
 ========================
-Either download the repository to your computer and install, e.g. by **pip**
+Either install via PyPI as follows:
 
 ```
-pip install .
+pip install opyndata
 ```
 
 or install directly from github:
