@@ -380,3 +380,20 @@ def load_matlab_rec(path, output_format='dataframe', name='recording'):
     return recording
 
 
+def combine_h5s(input_paths, output_path):
+    '''
+    Create master h5 file linking to several single-recording files.
+
+    Parameters
+    ---------------
+    input_paths : str
+        list of strings of file paths
+    output_path : str
+        string to save resulting master h5-file
+    '''
+    with h5py.File(output_path, 'w') as hf:
+        for file in input_paths:
+            with h5py.File(file, 'r') as hf_file:
+                fname = file.split('.h5')[0]
+                hf[fname] = h5py.ExternalLink(file, "/")
+

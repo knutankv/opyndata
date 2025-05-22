@@ -8,6 +8,7 @@ Support tools.
 from datetime import datetime
 from datetime import timedelta
 import numpy as np
+import h5py
 
 
 def datenum_to_datetime(datenum):
@@ -136,3 +137,40 @@ def time_axis(hf_recording, sensor_name, component=None, sensor_dict=None, start
 
     return t
 
+
+def get_all_dataset_names(hf, datasets=[], 
+              return_current_level=False):
+    
+    '''
+    Get unwrapped (flattened) paths to all datasets available in h5py group/object.
+
+    Parameters
+    -----------
+    hf : obj
+        object from h5py representing a group or file
+    datasets : list, default=[]
+        only used internally (recursive search), do not touch
+    return_current_level : bool, default=False
+        only used internally (recursive search), do not touch
+
+    Returns
+    ---------
+    datasets : list<str>
+        list of strings with all paths to datasets; each entry can be used as key to
+        the input hf object, e.g., the first dataset is grabbed by calling `hf[datasets[0]]`
+
+    '''
+    
+    for key in hf:
+        if isinstance(hf[key], h5py._hl.dataset.Dataset):
+            datasets.append(hf[key].name)
+            current_level = None
+        else:
+            current_level = hf[key]
+            __, current_level = get_all_dataset_names(current_level, 
+                                                      datasets=datasets, 
+                                                      return_current_level=True)
+    if return_current_level:
+        return datasets, current_level
+    else:
+        return datasets
