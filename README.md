@@ -1,5 +1,4 @@
 ![opyndata logo](https://raw.githubusercontent.com/knutankv/opyndata/master/opyndata-logo.svg)
-=======================
 
 What is opyndata?
 =======================
