@@ -19,7 +19,7 @@ classifiers = [
     "Topic :: Scientific/Engineering",
 ]
 dynamic = ["version"]
-dependencies = ['numpy', 'scipy', 'pandas', 'matplotlib', 'h5py', 'dash', 'plotly', 'datetime', 'flask']
+dependencies = ['numpy', 'scipy', 'pandas', 'matplotlib', 'h5py', 'dash', 'plotly', 'datetime', 'flask', 'dash_core_components', 'dash_html_components']
 
 
 [tool.setuptools.dynamic]
